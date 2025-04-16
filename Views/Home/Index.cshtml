@@ -192,6 +192,16 @@ else
                             setTimeout(function() {
                                 $('#bacValue').removeClass('animate__animated animate__pulse');
                             }, 1000);
+                            
+                            // Update the ConsumedTime field to current time
+                            if (typeof flatpickr !== 'undefined') {
+                                const consumedTimePicker = document.querySelector("#ConsumedTime")._flatpickr;
+                                consumedTimePicker.setDate(new Date());
+                            } else {
+                                var now = new Date();
+                                var formattedDate = now.toLocaleString();
+                                $("#ConsumedTime").val(formattedDate);
+                            }
                         }
                     });
                 }
