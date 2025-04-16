@@ -112,9 +112,10 @@ class BACCalculationService {
     /**
      * Estimate time until BAC reaches zero
      * @param {number} currentBAC - Current BAC percentage
+     * @param {Array} beverages - Array of consumed beverages
      * @returns {string} Time until BAC reaches zero, formatted as hours and minutes
      */
-    estimateTimeToZero(currentBAC) {
+    estimateTimeToZero(currentBAC, beverages) {
         // If current BAC is already 0 or less, return "Now"
         if (currentBAC <= 0) {
             return "Now";
@@ -122,7 +123,31 @@ class BACCalculationService {
 
         // Calculate hours to metabolize current BAC
         // BAC (%) / metabolization rate (%/hr)
-        const hoursToZero = currentBAC / this.metabolizationRate;
+        let hoursToZero = currentBAC / this.metabolizationRate;
+
+        // If we have any beverages that have yet to enter the bloodstream
+        // we need to add that time to the hours to zero calculation
+        // We assume 45 minutes (0.75 hours) for this calculation
+        let maxDelay = 0;
+        beverages.forEach(beverage => {
+            // Parse consumed time if it's a string
+            let consumedTime = beverage.consumedTime;
+            if (typeof consumedTime === 'string') {
+                consumedTime = new Date(consumedTime);
+            }
+
+            // Calculate elapsed hours since consumption
+            const hoursElapsed = (new Date() - consumedTime) / (1000 * 60 * 60);
+
+            // It takes about 30-70 minutes for the alcohol to get into the bloodstream
+            // We assume 45 minutes (0.75 hours) for this calculation
+            const absorptionDelay = 0.75;
+            const effectiveHoursElapsed = hoursElapsed - absorptionDelay < 0 ? Math.abs(hoursElapsed - absorptionDelay) : 0;
+
+            maxDelay = Math.max(maxDelay, effectiveHoursElapsed);
+        });
+        console.log(`Max delay from beverages: ${maxDelay}`);
+        hoursToZero += maxDelay; // Add the maximum delay from beverages to the hours to zero calculation
 
         // Calculate hours and minutes
         const hours = Math.floor(hoursToZero);

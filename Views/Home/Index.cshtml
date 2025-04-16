@@ -328,7 +328,7 @@
                     }
                     
                     const currentBAC = bacCalculationService.calculateBAC(userProfile, beverages);
-                    const timeToZero = bacCalculationService.estimateTimeToZero(currentBAC);
+                    const timeToZero = bacCalculationService.estimateTimeToZero(currentBAC, beverages);
                     const bacLevel = bacCalculationService.getBACLevelClass(currentBAC);
                     const formattedBAC = bacCalculationService.formatBAC(currentBAC);
                     
