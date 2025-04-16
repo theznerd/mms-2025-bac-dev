@@ -5,28 +5,28 @@
 
 <h1 class="mb-4 text-center">@ViewData["Title"]</h1>
 
-@if (!Model.HasProfile)
-{
-    <div id="userProfileSection" class="card mb-4">
+<div id="app-container">
+    <!-- User Profile Section - Shown when no profile exists -->
+    <div id="userProfileSection" class="card mb-4" style="display: none;">
         <div class="card-header">
             <h5 class="mb-0">Your Profile</h5>
         </div>
         <div class="card-body">
-            <form asp-action="SaveProfile" asp-controller="Home" method="post">
+            <form id="profileForm">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="Gender" class="form-label">Gender</label>
-                        <select id="Gender" asp-for="UserProfile.Gender" class="form-select" required>
+                        <label for="gender" class="form-label">Gender</label>
+                        <select id="gender" class="form-select" required>
                             <option value="">Select gender</option>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
                         </select>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="Weight" class="form-label">Weight</label>
+                        <label for="weight" class="form-label">Weight</label>
                         <div class="input-group">
-                            <input type="number" id="Weight" asp-for="UserProfile.Weight" class="form-control" min="1" step="0.1" required placeholder="Enter your weight">
-                            <select id="WeightUnit" asp-for="UserProfile.WeightUnit" class="form-select" style="max-width: 100px;">
+                            <input type="number" id="weight" class="form-control" min="1" step="0.1" required placeholder="Enter your weight">
+                            <select id="weightUnit" class="form-select" style="max-width: 100px;">
                                 <option value="lb">lb</option>
                                 <option value="kg">kg</option>
                                 <option value="stone">stone</option>
@@ -38,125 +38,85 @@
             </form>
         </div>
     </div>
-}
-else
-{
-    <div class="row mb-4">
-        <div class="col">
-            <div id="bacDisplaySection" class="card text-center">
-                <div class="card-header">
-                    <h5 class="mb-0">Current Blood Alcohol Content (BAC)</h5>
-                </div>
-                <div class="card-body">
-                    <h1 id="bacValue" class="display-4 @GetBacColorClass(Model.CurrentBAC)">@Model.CurrentBAC.ToString("0.000")%</h1>
-                    <p id="bacTime" class="text-muted">Estimated time until 0.00%: <span id="timeToZero">@Model.TimeToZero</span></p>
-                    <form asp-action="ClearData" asp-controller="Home" method="post">
-                        <button type="submit" class="btn btn-danger mt-3">Clear Data & Start New Session</button>
-                    </form>
-                </div>
-            </div>
+
+    <!-- BAC Display Section - Shown when profile exists -->
+    <div id="bacDisplaySection" class="card text-center mb-4" style="display: none;">
+        <div class="card-header">
+            <h5 class="mb-0">Current Blood Alcohol Content (BAC)</h5>
+        </div>
+        <div class="card-body">
+            <h1 id="bacValue" class="display-4">0.000%</h1>
+            <p id="bacTime" class="text-muted">Estimated time until 0.00%: <span id="timeToZero">Now</span></p>
+            <button id="clearDataBtn" class="btn btn-danger mt-3">Clear Data & Start New Session</button>
         </div>
     </div>
 
-    <div class="row mb-4">
-        <div class="col">
-            <div id="addBeverageSection" class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Add Beverage</h5>
-                </div>
-                <div class="card-body">
-                    <form asp-action="AddBeverage" asp-controller="Home" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label for="Amount" class="form-label">Amount</label>
-                                <div class="input-group">
-                                    <input type="number" id="Amount" name="Amount" value="@Model.NewBeverage.Amount" class="form-control" min="0.1" step="0.1" required>
-                                    <select id="VolumeUnit" name="VolumeUnit" class="form-select" style="max-width: 100px;">
-                                        <option value="oz" selected="@(Model.NewBeverage.VolumeUnit == "oz")">fl. oz.</option>
-                                        <option value="ml" selected="@(Model.NewBeverage.VolumeUnit == "ml")">mL</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="ABV" class="form-label">ABV%</label>
-                                <input type="number" id="ABV" name="ABV" value="@Model.NewBeverage.ABV" class="form-control" min="0.1" max="100" step="0.1" required>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="ConsumedTime" class="form-label">Time Consumed</label>
-                                <input type="text" id="ConsumedTime" name="ConsumedTime" class="form-control" required>
-                            </div>
+    <!-- Add Beverage Section - Shown when profile exists -->
+    <div id="addBeverageSection" class="card mb-4" style="display: none;">
+        <div class="card-header">
+            <h5 class="mb-0">Add Beverage</h5>
+        </div>
+        <div class="card-body">
+            <form id="beverageForm">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="amount" class="form-label">Amount</label>
+                        <div class="input-group">
+                            <input type="number" id="amount" class="form-control" min="0.1" step="0.1" required>
+                            <select id="volumeUnit" class="form-select" style="max-width: 100px;">
+                                <option value="oz">fl. oz.</option>
+                                <option value="ml">mL</option>
+                            </select>
                         </div>
-                        <button type="submit" class="btn btn-primary">Add Beverage</button>
-                    </form>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="abv" class="form-label">ABV%</label>
+                        <input type="number" id="abv" class="form-control" min="0.1" max="100" step="0.1" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="consumedTime" class="form-label">Time Consumed</label>
+                        <input type="text" id="consumedTime" class="form-control" required>
+                    </div>
                 </div>
-            </div>
+                <button type="submit" class="btn btn-primary">Add Beverage</button>
+            </form>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col">
-            <div id="beverageListSection" class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Beverages Consumed</h5>
-                </div>
-                <div class="card-body">
-                    @if (Model.Beverages.Count == 0)
-                    {
-                        <p class="text-center text-muted" id="noBeverages">No beverages added yet.</p>
-                    }
-                    else
-                    {
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Time</th>
-                                        <th>Amount</th>
-                                        <th>ABV%</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="beverageList">
-                                    @foreach (var beverage in Model.Beverages.OrderByDescending(b => b.ConsumedTime))
-                                    {
-                                        <tr>
-                                            <td>@beverage.ConsumedTime.ToString("g")</td>
-                                            <td>@beverage.Amount @beverage.VolumeUnit</td>
-                                            <td>@beverage.ABV%</td>
-                                            <td>
-                                                <form asp-action="DeleteBeverage" asp-controller="Home" method="post" style="display: inline;">
-                                                    <input type="hidden" name="id" value="@beverage.Id" />
-                                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                </div>
+    <!-- Beverage List Section - Shown when profile exists and beverages added -->
+    <div id="beverageListSection" class="card" style="display: none;">
+        <div class="card-header">
+            <h5 class="mb-0">Beverages Consumed</h5>
+        </div>
+        <div class="card-body">
+            <p id="noBeverages" class="text-center text-muted">No beverages added yet.</p>
+            <div class="table-responsive" id="beverageTableContainer" style="display: none;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Amount</th>
+                            <th>ABV%</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="beverageList">
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-}
-
-@functions {
-    public string GetBacColorClass(double bac)
-    {
-        if (bac >= 0.08) return "text-danger";
-        if (bac >= 0.04) return "text-warning";
-        return "text-success";
-    }
-}
+</div>
 
 @section Scripts {
     <script>
         $(function() {
+            // Initialize UI
+            initializeApp();
+            
             // Initialize flatpickr for datetime input
             if (typeof flatpickr !== 'undefined') {
-                flatpickr("#ConsumedTime", {
+                flatpickr("#consumedTime", {
                     enableTime: true,
                     dateFormat: "Y-m-d H:i",
                     defaultDate: new Date(),
@@ -166,46 +126,243 @@ else
                 // Fallback if flatpickr is not available
                 var now = new Date();
                 var formattedDate = now.toLocaleString();
-                $("#ConsumedTime").val(formattedDate);
+                $("#consumedTime").val(formattedDate);
             }
             
-            // Only run the update if user has a profile
-            @if (Model.HasProfile)
-            {
-                <text>
-                // Update BAC every minute
-                setInterval(updateBAC, 60000);
+            // Event handler for profile form submission
+            $('#profileForm').on('submit', function(e) {
+                e.preventDefault();
                 
-                function updateBAC() {
-                    $.ajax({
-                        url: '@Url.Action("RefreshBAC", "Home")',
-                        type: 'GET',
-                        success: function(data) {
-                            $('#bacValue').text(data.bac + '%');
-                            $('#timeToZero').text(data.timeToZero);
-                            
-                            // Update color class
-                            $('#bacValue').removeClass('text-success text-warning text-danger').addClass(data.bacLevel);
-                            
-                            // Add pulse animation
-                            $('#bacValue').addClass('animate__animated animate__pulse');
-                            setTimeout(function() {
-                                $('#bacValue').removeClass('animate__animated animate__pulse');
-                            }, 1000);
-                            
-                            // Update the ConsumedTime field to current time
-                            if (typeof flatpickr !== 'undefined') {
-                                const consumedTimePicker = document.querySelector("#ConsumedTime")._flatpickr;
-                                consumedTimePicker.setDate(new Date());
-                            } else {
-                                var now = new Date();
-                                var formattedDate = now.toLocaleString();
-                                $("#ConsumedTime").val(formattedDate);
-                            }
-                        }
+                const profile = {
+                    gender: $('#gender').val(),
+                    weight: parseFloat($('#weight').val()),
+                    weightUnit: $('#weightUnit').val()
+                };
+                
+                localStorageService.saveUserProfile(profile)
+                    .then(() => {
+                        console.log('Profile saved successfully');
+                        updateUIBasedOnProfile(true);
+                        updateBAC();
+                    })
+                    .catch(err => {
+                        console.error('Error saving profile:', err);
+                        alert('Failed to save profile. Please try again.');
                     });
+            });
+            
+            // Event handler for beverage form submission
+            $('#beverageForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                let consumedTime;
+                if (typeof flatpickr !== 'undefined') {
+                    consumedTime = document.querySelector("#consumedTime")._flatpickr.selectedDates[0];
+                } else {
+                    consumedTime = new Date($('#consumedTime').val());
                 }
-                </text>
+                
+                const beverage = {
+                    id: new Date().getTime(),
+                    amount: parseFloat($('#amount').val()),
+                    volumeUnit: $('#volumeUnit').val(),
+                    abv: parseFloat($('#abv').val()),
+                    consumedTime: consumedTime
+                };
+                
+                localStorageService.addBeverage(beverage)
+                    .then(() => {
+                        console.log('Beverage added successfully');
+                        $('#amount').val('');
+                        $('#abv').val('');
+                        
+                        // Update consumed time to now
+                        if (typeof flatpickr !== 'undefined') {
+                            document.querySelector("#consumedTime")._flatpickr.setDate(new Date());
+                        } else {
+                            $('#consumedTime').val(new Date().toLocaleString());
+                        }
+                        
+                        loadBeverages();
+                        updateBAC();
+                    })
+                    .catch(err => {
+                        console.error('Error adding beverage:', err);
+                        alert('Failed to add beverage. Please try again.');
+                    });
+            });
+            
+            // Event handler for clear data button
+            $('#clearDataBtn').on('click', function() {
+                if (confirm('Are you sure you want to clear all data and start a new session?')) {
+                    localStorageService.clearAllData()
+                        .then(() => {
+                            console.log('Data cleared successfully');
+                            updateUIBasedOnProfile(false);
+                        })
+                        .catch(err => {
+                            console.error('Error clearing data:', err);
+                            alert('Failed to clear data. Please try again.');
+                        });
+                }
+            });
+            
+            // Initialize the UI based on stored data
+            function initializeApp() {
+                localStorageService.getUserProfile()
+                    .then(profile => {
+                        const hasProfile = !!profile;
+                        updateUIBasedOnProfile(hasProfile);
+                        
+                        if (hasProfile) {
+                            // Fill in profile form for reference
+                            $('#gender').val(profile.gender);
+                            $('#weight').val(profile.weight);
+                            $('#weightUnit').val(profile.weightUnit);
+                            
+                            // Load beverages and update BAC
+                            loadBeverages();
+                            
+                            // Set up regular BAC updates
+                            setInterval(updateBAC, 60000);
+                            console.log("BAC update interval set - will refresh every minute");
+                            
+                            // Do initial BAC calculation
+                            updateBAC();
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error initializing app:', err);
+                        alert('Error initializing the application. Please refresh the page and try again.');
+                    });
+            }
+            
+            // Update UI visibility based on profile existence
+            function updateUIBasedOnProfile(hasProfile) {
+                if (hasProfile) {
+                    $('#userProfileSection').hide();
+                    $('#bacDisplaySection').show();
+                    $('#addBeverageSection').show();
+                    $('#beverageListSection').show();
+                } else {
+                    $('#userProfileSection').show();
+                    $('#bacDisplaySection').hide();
+                    $('#addBeverageSection').hide();
+                    $('#beverageListSection').hide();
+                }
+            }
+            
+            // Load and display beverages
+            function loadBeverages() {
+                localStorageService.getAllBeverages()
+                    .then(beverages => {
+                        const $beverageList = $('#beverageList');
+                        $beverageList.empty();
+                        
+                        if (beverages.length === 0) {
+                            $('#noBeverages').show();
+                            $('#beverageTableContainer').hide();
+                            return;
+                        }
+                        
+                        $('#noBeverages').hide();
+                        $('#beverageTableContainer').show();
+                        
+                        // Sort beverages by consumed time (newest first)
+                        beverages.sort((a, b) => {
+                            const timeA = new Date(a.consumedTime);
+                            const timeB = new Date(b.consumedTime);
+                            return timeB - timeA;
+                        });
+                        
+                        // Add each beverage to the table
+                        beverages.forEach(beverage => {
+                            const consumedTime = new Date(beverage.consumedTime);
+                            const formattedTime = consumedTime.toLocaleString();
+                            
+                            const $row = $('<tr>');
+                            $row.append($('<td>').text(formattedTime));
+                            $row.append($('<td>').text(`${beverage.amount} ${beverage.volumeUnit}`));
+                            $row.append($('<td>').text(`${beverage.abv}%`));
+                            
+                            const $deleteBtn = $('<button>')
+                                .addClass('btn btn-sm btn-danger')
+                                .text('Delete')
+                                .on('click', function() {
+                                    deleteBeverage(beverage.id);
+                                });
+                            
+                            $row.append($('<td>').append($deleteBtn));
+                            $beverageList.append($row);
+                        });
+                    })
+                    .catch(err => {
+                        console.error('Error loading beverages:', err);
+                    });
+            }
+            
+            // Delete a beverage
+            function deleteBeverage(id) {
+                localStorageService.deleteBeverage(id)
+                    .then(() => {
+                        console.log('Beverage deleted successfully');
+                        loadBeverages();
+                        updateBAC();
+                    })
+                    .catch(err => {
+                        console.error('Error deleting beverage:', err);
+                    });
+            }
+            
+            // Update BAC display
+            function updateBAC() {
+                console.log('Updating BAC calculation at', new Date().toISOString());
+                
+                Promise.all([
+                    localStorageService.getUserProfile(),
+                    localStorageService.getAllBeverages()
+                ]).then(([userProfile, beverages]) => {
+                    if (!userProfile) {
+                        console.warn('Cannot calculate BAC: No user profile found');
+                        return;
+                    }
+                    
+                    const currentBAC = bacCalculationService.calculateBAC(userProfile, beverages);
+                    const timeToZero = bacCalculationService.estimateTimeToZero(currentBAC);
+                    const bacLevel = bacCalculationService.getBACLevelClass(currentBAC);
+                    const formattedBAC = bacCalculationService.formatBAC(currentBAC);
+                    
+                    console.log('BAC calculation results:', {
+                        bac: formattedBAC,
+                        timeToZero: timeToZero,
+                        bacLevel: bacLevel
+                    });
+                    
+                    // Update the UI
+                    $('#bacValue').text(formattedBAC + '%');
+                    $('#timeToZero').text(timeToZero);
+                    
+                    // Update color class
+                    $('#bacValue').removeClass('text-success text-warning text-danger').addClass(bacLevel);
+                    
+                    // Add pulse animation
+                    $('#bacValue').addClass('animate__animated animate__pulse');
+                    setTimeout(function() {
+                        $('#bacValue').removeClass('animate__animated animate__pulse');
+                    }, 1000);
+                    
+                    // Update the time consumed field to current time for convenience
+                    if (typeof flatpickr !== 'undefined') {
+                        const consumedTimePicker = document.querySelector("#consumedTime")._flatpickr;
+                        consumedTimePicker.setDate(new Date());
+                    } else {
+                        const now = new Date();
+                        const formattedDate = now.toLocaleString();
+                        $("#consumedTime").val(formattedDate);
+                    }
+                }).catch(err => {
+                    console.error('Error updating BAC:', err);
+                });
             }
         });
     </script>
