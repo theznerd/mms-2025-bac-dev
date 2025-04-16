@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Tailwind Azure App</title>
+    <link rel="stylesheet" href="~/css/output.css" />
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <header class="bg-blue-600 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="/" class="text-white font-bold text-xl">Tailwind Azure App</a>
+                </div>
+                <nav class="flex items-center space-x-4">
+                    <a href="/" class="text-white hover:text-blue-100 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                    <a href="/Home/Privacy" class="text-white hover:text-blue-100 px-3 py-2 rounded-md text-sm font-medium">Privacy</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        @RenderBody()
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-center">
+                <p>&copy; @DateTime.Now.Year - Tailwind Azure App</p>
+            </div>
+        </div>
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

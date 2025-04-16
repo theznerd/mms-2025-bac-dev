@@ -1,0 +1,14 @@
+{
+  "name": "tailwind-azure-app",
+  "version": "1.0.0",
+  "description": "ASP.NET Core app with Tailwind CSS for Azure App Service",
+  "scripts": {
+    "build:css": "tailwindcss -i ./wwwroot/css/site.css -o ./wwwroot/css/output.css",
+    "watch:css": "tailwindcss -i ./wwwroot/css/site.css -o ./wwwroot/css/output.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32"
+  }
+}
