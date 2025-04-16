@@ -1,0 +1,56 @@
+/* Custom styles for BAC Tracker */
+.hidden {
+    display: none !important;
+}
+
+/* BAC color indicators */
+.bac-safe {
+    color: green;
+}
+
+.bac-caution {
+    color: #F9A602;
+}
+
+.bac-danger {
+    color: red;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    h1 {
+        font-size: 1.75rem;
+    }
+}
+
+/* Animation for BAC updates */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.pulse {
+    animation: pulse 1s;
+}
+
+/* Button hover effects */
+button:hover {
+    transform: translateY(-1px);
+    transition: transform 0.2s;
+}
+
+button:active {
+    transform: translateY(0);
+}

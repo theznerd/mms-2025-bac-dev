@@ -1,36 +1,202 @@
+@model mms_2025_bac_dev.Models.BACTrackerViewModel
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Blood Alcohol Content Tracker";
 }
 
-<div class="bg-white shadow rounded-lg p-6">
-    <h1 class="text-3xl font-bold text-blue-600 mb-4">Welcome to Tailwind Azure App</h1>
-    <p class="text-gray-700 mb-4">This is a sample ASP.NET Core application styled with Tailwind CSS and ready for Azure App Service deployment.</p>
-    
-    <div class="mt-8">
-        <h2 class="text-xl font-semibold text-gray-800 mb-2">Features</h2>
-        <ul class="list-disc pl-5 space-y-2 text-gray-600">
-            <li>ASP.NET Core MVC architecture</li>
-            <li>Tailwind CSS for styling</li>
-            <li>Ready for Azure App Service deployment</li>
-            <li>Responsive design</li>
-        </ul>
-    </div>
-    
-    <div class="mt-6">
-        <a href="https://learn.microsoft.com/en-us/azure/app-service/" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors">
-            Learn about Azure App Service
-        </a>
-    </div>
-</div>
+<h1 class="mb-4 text-center">@ViewData["Title"]</h1>
 
-<div class="grid md:grid-cols-2 gap-6 mt-8">
-    <div class="bg-white shadow rounded-lg p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-3">Getting Started</h2>
-        <p class="text-gray-600">Learn how to use this template and deploy to Azure.</p>
+@if (!Model.HasProfile)
+{
+    <div id="userProfileSection" class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Your Profile</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="SaveProfile" asp-controller="Home" method="post">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="Gender" class="form-label">Gender</label>
+                        <select id="Gender" asp-for="UserProfile.Gender" class="form-select" required>
+                            <option value="">Select gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="Weight" class="form-label">Weight</label>
+                        <div class="input-group">
+                            <input type="number" id="Weight" asp-for="UserProfile.Weight" class="form-control" min="1" step="0.1" required placeholder="Enter your weight">
+                            <select id="WeightUnit" asp-for="UserProfile.WeightUnit" class="form-select" style="max-width: 100px;">
+                                <option value="lb">lb</option>
+                                <option value="kg">kg</option>
+                                <option value="stone">stone</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Save Profile</button>
+            </form>
+        </div>
     </div>
-    
-    <div class="bg-white shadow rounded-lg p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-3">Documentation</h2>
-        <p class="text-gray-600">Check out the documentation for more information.</p>
+}
+else
+{
+    <div class="row mb-4">
+        <div class="col">
+            <div id="bacDisplaySection" class="card text-center">
+                <div class="card-header">
+                    <h5 class="mb-0">Current Blood Alcohol Content (BAC)</h5>
+                </div>
+                <div class="card-body">
+                    <h1 id="bacValue" class="display-4 @GetBacColorClass(Model.CurrentBAC)">@Model.CurrentBAC.ToString("0.000")%</h1>
+                    <p id="bacTime" class="text-muted">Estimated time until 0.00%: <span id="timeToZero">@Model.TimeToZero</span></p>
+                    <form asp-action="ClearData" asp-controller="Home" method="post">
+                        <button type="submit" class="btn btn-danger mt-3">Clear Data & Start New Session</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+
+    <div class="row mb-4">
+        <div class="col">
+            <div id="addBeverageSection" class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Add Beverage</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="AddBeverage" asp-controller="Home" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="Amount" class="form-label">Amount</label>
+                                <div class="input-group">
+                                    <input type="number" id="Amount" name="Amount" value="@Model.NewBeverage.Amount" class="form-control" min="0.1" step="0.1" required>
+                                    <select id="VolumeUnit" name="VolumeUnit" class="form-select" style="max-width: 100px;">
+                                        <option value="oz" selected="@(Model.NewBeverage.VolumeUnit == "oz")">fl. oz.</option>
+                                        <option value="ml" selected="@(Model.NewBeverage.VolumeUnit == "ml")">mL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="ABV" class="form-label">ABV%</label>
+                                <input type="number" id="ABV" name="ABV" value="@Model.NewBeverage.ABV" class="form-control" min="0.1" max="100" step="0.1" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="ConsumedTime" class="form-label">Time Consumed</label>
+                                <input type="text" id="ConsumedTime" name="ConsumedTime" class="form-control" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Beverage</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div id="beverageListSection" class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Beverages Consumed</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Beverages.Count == 0)
+                    {
+                        <p class="text-center text-muted" id="noBeverages">No beverages added yet.</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Amount</th>
+                                        <th>ABV%</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="beverageList">
+                                    @foreach (var beverage in Model.Beverages.OrderByDescending(b => b.ConsumedTime))
+                                    {
+                                        <tr>
+                                            <td>@beverage.ConsumedTime.ToString("g")</td>
+                                            <td>@beverage.Amount @beverage.VolumeUnit</td>
+                                            <td>@beverage.ABV%</td>
+                                            <td>
+                                                <form asp-action="DeleteBeverage" asp-controller="Home" method="post" style="display: inline;">
+                                                    <input type="hidden" name="id" value="@beverage.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@functions {
+    public string GetBacColorClass(double bac)
+    {
+        if (bac >= 0.08) return "text-danger";
+        if (bac >= 0.04) return "text-warning";
+        return "text-success";
+    }
+}
+
+@section Scripts {
+    <script>
+        $(function() {
+            // Initialize flatpickr for datetime input
+            if (typeof flatpickr !== 'undefined') {
+                flatpickr("#ConsumedTime", {
+                    enableTime: true,
+                    dateFormat: "Y-m-d H:i",
+                    defaultDate: new Date(),
+                    time_24hr: false,
+                });
+            } else {
+                // Fallback if flatpickr is not available
+                var now = new Date();
+                var formattedDate = now.toLocaleString();
+                $("#ConsumedTime").val(formattedDate);
+            }
+            
+            // Only run the update if user has a profile
+            @if (Model.HasProfile)
+            {
+                <text>
+                // Update BAC every minute
+                setInterval(updateBAC, 60000);
+                
+                function updateBAC() {
+                    $.ajax({
+                        url: '@Url.Action("RefreshBAC", "Home")',
+                        type: 'GET',
+                        success: function(data) {
+                            $('#bacValue').text(data.bac + '%');
+                            $('#timeToZero').text(data.timeToZero);
+                            
+                            // Update color class
+                            $('#bacValue').removeClass('text-success text-warning text-danger').addClass(data.bacLevel);
+                            
+                            // Add pulse animation
+                            $('#bacValue').addClass('animate__animated animate__pulse');
+                            setTimeout(function() {
+                                $('#bacValue').removeClass('animate__animated animate__pulse');
+                            }, 1000);
+                        }
+                    });
+                }
+                </text>
+            }
+        });
+    </script>
+}

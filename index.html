@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAC Tracker</title>
+    <link href="./wwwroot/css/output.css" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">BAC Tracker</h1>
+        
+        <!-- User Profile Section -->
+        <div id="userProfileSection" class="mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Your Profile</h2>
+                <form id="userProfileForm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="gender" class="block text-gray-700 mb-2">Gender</label>
+                            <select id="gender" class="w-full p-2 border rounded-md" required>
+                                <option value="">Select gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="weight" class="block text-gray-700 mb-2">Weight</label>
+                            <div class="flex">
+                                <input type="number" id="weight" class="w-full p-2 border rounded-l-md" min="1" step="0.1" required>
+                                <select id="weightUnit" class="p-2 border border-l-0 rounded-r-md">
+                                    <option value="lb">lb</option>
+                                    <option value="kg">kg</option>
+                                    <option value="stone">stone</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">Save Profile</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- BAC Display Section -->
+        <div id="bacDisplaySection" class="mb-8 hidden">
+            <div class="bg-white rounded-lg shadow p-6 text-center">
+                <h2 class="text-xl font-semibold mb-2">Current Blood Alcohol Content (BAC)</h2>
+                <div id="bacValue" class="text-5xl font-bold my-4">0.000%</div>
+                <div id="bacTime" class="text-gray-600">Estimated time until 0.00%: <span id="timeToZero">N/A</span></div>
+                <button id="newSession" class="mt-4 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Clear Data & Start New Session</button>
+            </div>
+        </div>
+
+        <!-- Add Beverage Section -->
+        <div id="addBeverageSection" class="mb-8 hidden">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Add Beverage</h2>
+                <form id="addBeverageForm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="amount" class="block text-gray-700 mb-2">Amount</label>
+                            <div class="flex">
+                                <input type="number" id="amount" class="w-full p-2 border rounded-l-md" min="0" step="0.1" required>
+                                <select id="volumeUnit" class="p-2 border border-l-0 rounded-r-md">
+                                    <option value="oz">fl. oz.</option>
+                                    <option value="ml">mL</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="abv" class="block text-gray-700 mb-2">ABV%</label>
+                            <input type="number" id="abv" class="w-full p-2 border rounded-md" min="0" max="100" step="0.1" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="consumedTime" class="block text-gray-700 mb-2">Time Consumed</label>
+                            <input type="datetime-local" id="consumedTime" class="w-full p-2 border rounded-md" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">Add Beverage</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Beverage List Section -->
+        <div id="beverageListSection" class="hidden">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Beverages Consumed</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white">
+                        <thead>
+                            <tr>
+                                <th class="py-2 px-4 border-b text-left">Time</th>
+                                <th class="py-2 px-4 border-b text-left">Amount</th>
+                                <th class="py-2 px-4 border-b text-left">ABV%</th>
+                                <th class="py-2 px-4 border-b text-left">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="beverageList">
+                            <!-- Beverages will be added here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="noBeverages" class="text-center py-4 text-gray-500">No beverages added yet.</div>
+            </div>
+        </div>
+    </div>
+    <script src="./scripts.js"></script>
+</body>
+</html>

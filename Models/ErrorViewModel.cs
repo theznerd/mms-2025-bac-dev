@@ -1,4 +1,4 @@
-namespace TailwindAzureApp.Models
+namespace mms_2025_bac_dev.Models
 {
     public class ErrorViewModel
     {
