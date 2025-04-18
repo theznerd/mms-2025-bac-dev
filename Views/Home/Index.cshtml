@@ -121,6 +121,19 @@
                     dateFormat: "Y-m-d H:i",
                     defaultDate: new Date(),
                     time_24hr: false,
+                    disableMobile: true, // Prevents using the mobile native picker
+                    allowInput: true, // Allows direct input in the field
+                    clickOpens: true, // Ensures clicking on the input opens the picker
+                    onReady: function(selectedDates, dateStr, instance) {
+                        // Force initialization with current date/time on ready
+                        instance.setDate(new Date());
+                    },
+                    onChange: function(selectedDates, dateStr, instance) {
+                        // Ensure valid date is always set
+                        if (selectedDates.length === 0) {
+                            instance.setDate(new Date());
+                        }
+                    }
                 });
             } else {
                 // Fallback if flatpickr is not available
