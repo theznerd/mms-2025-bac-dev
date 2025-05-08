@@ -78,6 +78,22 @@
                         <input type="text" id="consumedTime" class="form-control" required>
                     </div>
                 </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <label class="form-label">Quick Add Standard Drinks</label>
+                        <div class="d-flex gap-2">
+                            <button type="button" id="addBeerBtn" class="btn btn-outline-primary btn-standard-drink">
+                                🍺 Beer<br>(12oz, 5%)
+                            </button>
+                            <button type="button" id="addWineBtn" class="btn btn-outline-danger btn-standard-drink">
+                                🍷 Wine<br>(4oz, 15%)
+                            </button>
+                            <button type="button" id="addTequilaBtn" class="btn btn-outline-warning btn-standard-drink">
+                                🥃 TEQUILA<br>(2oz, 35%)
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <button type="submit" class="btn btn-primary">Add Beverage</button>
             </form>
         </div>
@@ -141,6 +157,55 @@
                 var formattedDate = now.toLocaleString();
                 $("#consumedTime").val(formattedDate);
             }
+            
+            // Event handlers for standard drink buttons
+            $('#addBeerBtn').on('click', function() {
+                $('#amount').val('12');
+                $('#volumeUnit').val('oz');
+                $('#abv').val('5');
+                
+                // Set current time
+                if (typeof flatpickr !== 'undefined') {
+                    document.querySelector("#consumedTime")._flatpickr.setDate(new Date());
+                } else {
+                    $("#consumedTime").val(new Date().toLocaleString());
+                }
+                
+                // Optionally auto-submit the form
+                $('#beverageForm').trigger('submit');
+            });
+            
+            $('#addWineBtn').on('click', function() {
+                $('#amount').val('4');
+                $('#volumeUnit').val('oz');
+                $('#abv').val('15');
+                
+                // Set current time
+                if (typeof flatpickr !== 'undefined') {
+                    document.querySelector("#consumedTime")._flatpickr.setDate(new Date());
+                } else {
+                    $("#consumedTime").val(new Date().toLocaleString());
+                }
+                
+                // Optionally auto-submit the form
+                $('#beverageForm').trigger('submit');
+            });
+            
+            $('#addTequilaBtn').on('click', function() {
+                $('#amount').val('2');
+                $('#volumeUnit').val('oz');
+                $('#abv').val('35');
+                
+                // Set current time
+                if (typeof flatpickr !== 'undefined') {
+                    document.querySelector("#consumedTime")._flatpickr.setDate(new Date());
+                } else {
+                    $("#consumedTime").val(new Date().toLocaleString());
+                }
+                
+                // Optionally auto-submit the form
+                $('#beverageForm').trigger('submit');
+            });
             
             // Event handler for profile form submission
             $('#profileForm').on('submit', function(e) {
